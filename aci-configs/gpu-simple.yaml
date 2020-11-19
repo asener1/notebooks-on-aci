@@ -1,0 +1,32 @@
+additional_properties: {}
+apiVersion: '2019-12-01'
+name: gpucontainergroup
+location: westus2
+properties:
+  containers:
+  - name: gpucontainer
+    properties:
+      image: tensorflow/tensorflow:latest-gpu-jupyter
+      resources:
+        requests:
+          cpu: 4
+          memoryInGB: 14
+          gpu:
+            count: 1
+            sku: K80
+      volumeMounts:
+      - name: azuremlexamples
+        mountPath: /tf/repos
+      ports:
+      - port: 8888
+  osType: Linux
+  volumes:
+  - name: azuremlexamples
+    gitRepo:
+      repository: https://github.com/Azure/azureml-examples
+  ipAddress:
+    type: Public
+    ports:
+    - protocol: tcp
+      port: 8888
+  restartPolicy: OnFailure

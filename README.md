@@ -14,11 +14,10 @@ RG=notebooks-on-aci-rg
 az group create -l westus2 -n $RG
 ```
 
-## Simple example
+## CPU: Simple Example
 To begin, you are going to start with a 'simple example' that runs the [tensorflow/tensorflow:latest-jupyter](https://hub.docker.com/r/tensorflow/tensorflow/) image from dockerhub on ACI.
 
-### ACI config file
-The configuration (`aci-configs/simple.yaml`) for running this container is as follows:
+The configuration file (`aci-configs/cpu-simple.yaml`) for running this container is as follows:
 
 ```yaml
 additional_properties: {}
@@ -52,18 +51,15 @@ properties:
   restartPolicy: OnFailure
 ```
 
-Note in this config we are asking ACI to 'mount' a GH repo (this clones the GH repo into a folder path).
+__Note:__ in this config we are asking ACI to 'mount' a GH repo (this clones the GH repo into a folder path).
 
-### Run container on ACI
-Create the ACI:
+Create the container using:
 
 ```bash
-az container create --resource-group $RG --file ./aci-configs/simple.yaml
+az container create --resource-group $RG --file ./aci-configs/cpu-simple.yaml
 ```
 
-It should take around 2-3minutes for the container to be provisioned.
-
-### Get the Jupyter URL
+__It should take around 2-3minutes for the container to be provisioned.__
 
 This repo has a small bash utility script that extracts the URL to access jupyter, run this to access jupyter:
 
@@ -75,7 +71,41 @@ When you access jupyter, you will notice that there is a directory called `repos
 
 <img src="./media/simple-example.png" width="800" />
 
-### Stop the container
+To stop the container run:
+
+```bash
+az container stop --resource-group $RG --name cpucontainergroup
+```
+
+## GPU: Simple Example
+
+Here we will start a container that uses a docker image that has been configured for GPU - [tensorflow/tensorflow:latest-gpu-jupyter](https://hub.docker.com/r/tensorflow/tensorflow/).
+
+The configuration file (`aci-configs/gpu-simple.yaml`) includes the specification for GPU resource:
+
+```yaml
+gpu:
+    count: 1
+    sku: K80
+```
+
+i.e. you will have a container with 1 K80 GPU card (V100 cards are also available).
+
+To run this container:
+
+```bash
+az container create --resource-group $RG --file ./aci-configs/gpu-simple.yaml
+```
+
+__NOTE: It will take around 5minutes for the GPU container to be provisioned.__
+
+Get the Jupyter URL:
+
+```bash
+./utils/show-jupyter-url.sh $RG gpucontainergroup gpucontainer
+```
+
+Copy-and-paste the URL into a browser.
 
 To stop the container run:
 
