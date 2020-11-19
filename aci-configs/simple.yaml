@@ -1,7 +1,7 @@
 additional_properties: {}
 apiVersion: '2019-12-01'
 name: cpucontainergroup
-location: westus
+location: westus2
 properties:
   containers:
   - name: cpucontainer
